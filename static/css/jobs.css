@@ -1,0 +1,27 @@
+.job-card {
+    transition: transform 0.2s;
+}
+
+.job-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.badge i {
+    margin-right: 3px;
+}
+
+.job-meta {
+    margin: 15px 0;
+}
+
+.job-meta .badge {
+    margin-right: 10px;
+}
+
+.filter-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}

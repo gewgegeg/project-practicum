@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} - Детали вакансии{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h1>{{ job.title }}</h1>
+            <h6 class="text-muted">{{ job.company }}</h6>
+        </div>
+        <div class="card-body">
+            <div class="job-meta mb-4">
+                <span class="badge badge-primary">{{ job.get_job_type_display }}</span>
+                <span class="badge badge-info">{{ job.location }}</span>
+                <span class="badge badge-secondary">Дедлайн: {{ job.deadline|date:"d.m.Y" }}</span>
+            </div>
+
+            <h5>Описание вакансии:</h5>
+            <p>{{ job.description }}</p>
+
+            {% if user.is_authenticated %}
+                {% if not has_applied %}
+                    <a href="{% url 'jobs:apply' job.pk %}" class="btn btn-primary">Подать заявку</a>
+                {% else %}
+                    <div class="alert alert-info">
+                        Вы уже подали заявку на эту вакансию
+                    </div>
+                {% endif %}
+
+                {% if user.is_staff %}
+                    <a href="{% url 'jobs:job-delete' job.pk %}" class="btn btn-danger">Удалить вакансию</a>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-warning">
+                    Для подачи заявки необходимо <a href="{% url 'login' %}">войти</a> в систему
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

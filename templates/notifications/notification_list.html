@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="notifications-container">
+    <h1>Уведомления</h1>
+    
+    <div class="notifications-list">
+        {% for notification in notifications %}
+            <div class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                <div class="notification-content">
+                    <h3>{{ notification.title }}</h3>
+                    <p>{{ notification.message }}</p>
+                    <span class="notification-time">{{ notification.created_at|timesince }} ago</span>
+                </div>
+                {% if not notification.is_read %}
+                    <button class="mark-read-btn" data-id="{{ notification.id }}">Mark as read</button>
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="no-notifications">уведомлений нет</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.notifications-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.notification-card {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.notification-card.unread {
+    border-left: 4px solid var(--accent);
+}
+
+.notification-content h3 {
+    margin: 0 0 0.5rem;
+    color: var(--text-primary);
+}
+
+.notification-content p {
+    color: var(--text-secondary);
+    margin: 0 0 0.5rem;
+}
+
+.notification-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.mark-read-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.no-notifications {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-secondary);
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+}
+</style>
+
+<script>
+document.querySelectorAll('.mark-read-btn').forEach(button => {
+    button.addEventListener('click', async function() {
+        const notificationId = this.dataset.id;
+        try {
+            const response = await fetch(`/notifications/${notificationId}/mark-read/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+            });
+            if (response.ok) {
+                this.closest('.notification-card').classList.remove('unread');
+                this.remove();
+            }
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    });
+});
+</script>
+{% endblock %}

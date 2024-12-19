@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Список вакансий{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Доступные вакансии</h1>
+    
+    <div class="filters mb-4">
+        <form method="get" class="form-inline">
+            <select name="job_type" class="form-control mr-2">
+                <option value="">Все типы</option>
+                <option value="FULL_TIME">Полная занятость</option>
+                <option value="PART_TIME">Частичная занятость</option>
+                <option value="INTERNSHIP">Стажировка</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Применить фильтр</button>
+        </form>
+    </div>
+
+    {% if recommended_jobs %}
+    <div class="recommended-jobs mb-4">
+        <h3>Рекомендованные вакансии</h3>
+        <div class="row">
+            {% for job in recommended_jobs %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ job.title }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                        <p class="card-text">{{ job.description|truncatewords:20 }}</p>
+                        <a href="{% url 'jobs:job-detail' job.pk %}" class="btn btn-primary">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="job-list">
+        {% for job in jobs %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">{{ job.title }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{{ job.company }}</h6>
+                <p class="card-text">{{ job.description|truncatewords:30 }}</p>
+                <div class="job-meta">
+                    <span class="badge badge-primary">{{ job.get_job_type_display }}</span>
+                    <span class="badge badge-info">{{ job.location }}</span>
+                    <span class="badge badge-secondary">Дедлайн: {{ job.deadline|date:"d.m.Y" }}</span>
+                </div>
+                <a href="{% url 'jobs:job-detail' job.pk %}" class="btn btn-primary mt-2">Подробнее</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="alert alert-info">
+            Нет доступных вакансий
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

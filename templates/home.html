@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="home-container">
+    <div class="hero-section">
+        <h1>Найди себя</h1>
+        <p class="lead">Здесь ты найдешь работу на любой вкус</p>
+        <div class="cta-buttons">
+            <a href="{% url 'jobs:job-list' %}" class="btn btn-primary">Просмотр вакансий</a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'login' %}" class="btn btn-secondary">Вход</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if user.is_authenticated %}
+    {% if recommended_jobs %}
+    <section class="job-section">
+        <h2>Подходит вам</h2>
+        <div class="job-grid">
+            {% for job in recommended_jobs %}
+            {% include 'jobs/partials/job_card.html' with job=job %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="job-section">
+        <h2>Актуальные возможности</h2>
+        <div class="job-grid">
+            {% for job in trending_jobs %}
+            {% include 'jobs/partials/job_card.html' with job=job %}
+            {% empty %}
+            <p class="no-results">No trending jobs available.</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<style>
+    .home-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .hero-section {
+        text-align: center;
+        padding: 4rem 2rem;
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+        margin-bottom: 3rem;
+    }
+
+    .hero-section h1 {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--accent);
+    }
+
+    .lead {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .btn-primary {
+        background-color: var(--accent);
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        border: 1px solid var(--accent);
+        color: var(--accent);
+    }
+
+    .job-section {
+        margin-top: 3rem;
+    }
+
+    .job-section h2 {
+        margin-bottom: 1.5rem;
+    }
+
+    .job-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .no-results {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 2rem;
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}

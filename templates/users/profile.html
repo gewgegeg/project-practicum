@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="profile-header">
+        <h1>{{ profile_user.get_full_name|default:profile_user.username }}</h1>
+        {% if user == profile_user %}
+            <a href="{% url 'users:profile-edit' %}" class="btn">Зарегистрироваться - Портал вакансий в университете</a>
+        {% endif %}
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-info">
+            <h2>Информация</h2>
+            <div class="info-group">
+                <label>Имя пользователя:</label>
+                <span>{{ profile_user.username }}</span>
+            </div>
+            {% if profile_user.email %}
+            <div class="info-group">
+                <label>Email:</label>
+                <span>{{ profile_user.email }}</span>
+            </div>
+            {% endif %}
+            {% if profile_user.first_name or profile_user.last_name %}
+            <div class="info-group">
+                <label>Название:</label>
+                <span>{{ profile_user.get_full_name }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        {% if user == profile_user %}
+        <div class="profile-applications">
+            <h2>Мои приложения</h2>
+            {% for application in profile_user.applications.all %}
+            <div class="application-card">
+                <h3>{{ application.job.title }}</h3>
+                <p class="company">{{ application.job.company }}</p>
+                <p class="status">Статус: {{ application.get_status_display }}</p>
+                <a href="{% url 'jobs:job-detail' application.job.pk %}" class="btn">View Job</a>
+            </div>
+            {% empty %}
+            <p class="no-applications">Вы еще не подали заявку на вакансию.</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.profile-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.profile-info {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.info-group {
+    margin-bottom: 1rem;
+}
+
+.info-group label {
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.application-card {
+    background-color: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.application-card h3 {
+    margin: 0 0 0.5rem;
+}
+
+.company {
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.status {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: var(--accent);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.no-applications {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+</style>
+{% endblock %}
